@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Амина, я люблю тебя ❤️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Caveat:wght@500;600;700&family=Quicksand:wght@400;500;600;700&family=Baloo+2:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF6DD;
+    --pink-1:#FFE9F0;
+    --pink-2:#FFD6E7;
+    --pink-3:#FFB6C1;
+    --lav:#EEDCFF;
+    --white:#FFFFFF;
+    --ink:#6b4a56;
+    --ink-soft:#9c7f8a;
+    --gold:#F2C879;
+    --leaf:#9fb98a;
+    --script: 'Great Vibes', cursive;
+    --hand: 'Caveat', cursive;
+    --body: 'Quicksand', sans-serif;
+    --round: 'Baloo 2', sans-serif;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;}
+  body{
+    font-family:var(--body);
+    color:var(--ink);
+    background:linear-gradient(160deg,var(--cream),var(--pink-1) 55%,var(--pink-2));
+    position:relative;
+  }
+  #app{position:relative; width:100%; height:100vh; height:100dvh; overflow:hidden;}
+
+  /* ---------- decor layer ---------- */
+  #decor{position:fixed; inset:0; pointer-events:none; z-index:5; overflow:hidden;}
+  .drift{position:absolute; opacity:.55; will-change:transform,opacity; filter:drop-shadow(0 2px 6px rgba(255,182,193,.25));}
+  .petal{animation:fall linear infinite;}
+  .spark{animation:twinkle ease-in-out infinite;}
+  .float-heart{animation:floatUp linear infinite;}
+  @keyframes fall{
+    0%{transform:translateY(-8vh) translateX(0) rotate(0deg); opacity:0;}
+    8%{opacity:.65;}
+    92%{opacity:.5;}
+    100%{transform:translateY(108vh) translateX(var(--dx,20px)) rotate(300deg); opacity:0;}
+  }
+  @keyframes floatUp{
+    0%{transform:translateY(10vh) scale(.8); opacity:0;}
+    10%{opacity:.5;}
+    90%{opacity:.35;}
+    100%{transform:translateY(-105vh) scale(1.05); opacity:0;}
+  }
+  @keyframes twinkle{
+    0%,100%{opacity:.15; transform:scale(.85);}
+    50%{opacity:.75; transform:scale(1.15);}
+  }
+
+  /* ---------- screens ---------- */
+  .screen{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:8vh 6vw 6vh; text-align:center;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transform:translateY(18px) scale(.985); filter:blur(6px);
+    transition:opacity .7s cubic-bezier(.22,.9,.32,1), transform .7s cubic-bezier(.22,.9,.32,1), filter .7s;
+    z-index:1;
+  }
+  .screen.active{opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0) scale(1); filter:blur(0); z-index:10;}
+  .screen.leaving{opacity:0; transform:translateY(-18px) scale(1.01); filter:blur(6px);}
+
+  .eyebrow{font-family:var(--hand); font-size:1.15rem; color:var(--ink-soft); margin:0 0 .3rem;}
+  h1.script{font-family:var(--script); font-weight:400; font-size:clamp(2.4rem,7vw,4.2rem); color:#e0728f; margin:.2rem 0; line-height:1.15;}
+  h2.script{font-family:var(--script); font-size:clamp(2rem,6vw,3rem); color:#e0728f; margin:.2rem 0;}
+  p.line{font-family:var(--body); font-size:clamp(1rem,2.4vw,1.2rem); color:var(--ink); max-width:520px; margin:.5rem auto; line-height:1.6;}
+  .fade-in{opacity:0; animation:fadeInUp .8s ease forwards;}
+  @keyframes fadeInUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+
+  /* button */
+  .btn{
+    font-family:var(--round); font-size:1.05rem; font-weight:600; color:#8a3b52;
+    background:linear-gradient(135deg,var(--pink-2),var(--pink-3));
+    border:none; padding:.85rem 2.1rem; border-radius:999px; cursor:pointer;
+    box-shadow:0 6px 18px rgba(224,114,143,.28), inset 0 1px 0 rgba(255,255,255,.6);
+    position:relative; transition:transform .25s ease, box-shadow .25s ease;
+    animation:pulse 2.6s ease-in-out infinite;
+  }
+  .btn:hover{transform:scale(1.06); box-shadow:0 10px 26px rgba(224,114,143,.4);}
+  .btn:active{transform:scale(.94);}
+  @keyframes pulse{0%,100%{box-shadow:0 6px 18px rgba(224,114,143,.28);} 50%{box-shadow:0 6px 26px rgba(224,114,143,.5);}}
+  .btn.ghost{background:transparent; border:2px solid var(--pink-3); color:#c76a86; animation:none; box-shadow:none;}
+
+  /* progress hearts */
+  #progress{position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:30; display:flex; gap:4px; font-size:.85rem; letter-spacing:2px; color:var(--pink-3); user-select:none;}
+  #progress span.done{color:#e0728f;}
+
+  /* back button */
+  #backBtn{position:fixed; top:14px; left:16px; z-index:30; background:none; border:none; font-size:1.4rem; color:var(--pink-3); opacity:.35; cursor:pointer; transition:opacity .3s, transform .3s; padding:6px;}
+  #backBtn:hover{opacity:.9; transform:translateX(-3px);}
+  #backBtn::after{content:'Вернуться назад'; position:absolute; top:110%; left:0; font-family:var(--hand); font-size:.95rem; white-space:nowrap; opacity:0; transition:opacity .25s; color:var(--ink-soft);}
+  #backBtn:hover::after{opacity:1;}
+
+  /* music toggle */
+  #musicToggle{position:fixed; top:14px; right:16px; z-index:30; background:rgba(255,255,255,.55); border:1px solid var(--pink-2); color:#c76a86; border-radius:999px; font-family:var(--round); font-size:.85rem; padding:.4rem .9rem; cursor:pointer; backdrop-filter:blur(4px);}
+
+  /* heart-shaped page-switch button */
+  #heartNav{
+    position:fixed; right:20px; bottom:22px; z-index:40;
+    width:54px; height:48px; cursor:pointer; border:none; background:none; padding:0;
+    filter:drop-shadow(0 6px 14px rgba(224,114,143,.45));
+    transition:transform .25s ease, opacity .3s ease;
+    animation:heartbeat 2.6s ease-in-out infinite;
+  }
+  #heartNav .lobe{
+    position:absolute; top:0; width:27px; height:43px;
+    background:linear-gradient(160deg,var(--pink-3),#e0728f);
+    border-radius:27px 27px 0 0; transform-origin:0 100%; transform:rotate(-45deg); left:27px;
+  }
+  #heartNav .lobe.right{left:0; transform:rotate(45deg); transform-origin:100% 100%;}
+  #heartNav .arrow{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:1rem; font-weight:700; z-index:2; top:2px;
+  }
+  #heartNav:hover{transform:scale(1.1);}
+  #heartNav:active{transform:scale(.9);}
+  #heartNav.hidden{opacity:0; pointer-events:none; transform:scale(.6);}
+  #heartNav::after{
+    content:'Дальше'; position:absolute; right:0; bottom:110%; white-space:nowrap;
+    font-family:var(--hand); font-size:.95rem; color:var(--ink-soft); opacity:0; transition:opacity .25s;
+  }
+  #heartNav:hover::after{opacity:1;}
+  @media (max-width:640px){ #heartNav::after{display:none;} }
+
+  /* envelope */
+  .envelope{width:130px; height:90px; position:relative; margin:1.2rem auto; cursor:pointer;}
+  .envelope .body{position:absolute; inset:0; background:linear-gradient(135deg,#fff,var(--pink-1)); border:2px solid var(--pink-3); border-radius:8px;}
+  .envelope .flap{position:absolute; top:0; left:0; width:100%; height:0; border-left:65px solid transparent; border-right:65px solid transparent; border-top:52px solid var(--pink-2); transform-origin:top; transition:transform .5s ease;}
+  .envelope .heart-seal{position:absolute; top:38%; left:50%; transform:translate(-50%,-50%); font-size:1.3rem; z-index:2;}
+  .envelope.open .flap{transform:rotateX(180deg);}
+
+  /* cards grid */
+  .cards{display:flex; flex-wrap:wrap; gap:14px; justify-content:center; max-width:640px; margin-top:1.2rem;}
+  .card{
+    background:linear-gradient(160deg,#fff,var(--pink-1)); border-radius:18px; padding:1.1rem 1.3rem; min-width:150px; max-width:230px;
+    box-shadow:0 6px 16px rgba(224,114,143,.15); cursor:pointer; font-family:var(--round); font-size:.95rem; color:#8a3b52;
+    transition:transform .3s ease, box-shadow .3s ease, background .3s ease; position:relative;
+  }
+  .card:hover{transform:translateY(-6px) rotate(-1deg); box-shadow:0 14px 28px rgba(224,114,143,.28);}
+  .card .front{display:block;}
+  .card .back{display:none; font-family:var(--body); font-size:.88rem; color:var(--ink-soft); margin-top:.4rem;}
+  .card.open .back{display:block;}
+  .card.open{background:linear-gradient(160deg,#fff,var(--lav));}
+  .card .mini-heart{position:absolute; top:-8px; right:-6px; font-size:.9rem; opacity:0; transition:opacity .3s;}
+  .card.open .mini-heart{opacity:1;}
+
+  /* hearts screen */
+  .hearts-grid{display:flex; flex-wrap:wrap; gap:18px; justify-content:center; max-width:560px; margin-top:1rem;}
+  .big-heart{
+    font-size:2.6rem; cursor:pointer; position:relative; filter:drop-shadow(0 4px 10px rgba(224,114,143,.35));
+    transition:transform .3s ease; animation:heartbeat 2.8s ease-in-out infinite;
+  }
+  .big-heart:hover{transform:scale(1.15);}
+  .big-heart.opened{animation:none; opacity:.55; transform:scale(.95);}
+  @keyframes heartbeat{0%,100%{transform:scale(1);} 50%{transform:scale(1.07);}}
+  .heart-msg{font-family:var(--hand); font-size:1.1rem; color:#c76a86; max-width:180px; margin-top:.3rem;}
+
+  /* lab facts */
+  .facts{display:flex; flex-direction:column; gap:.9rem; max-width:460px; margin-top:1rem;}
+  .fact{background:rgba(255,255,255,.65); border-radius:14px; padding:.8rem 1.1rem; text-align:left; font-family:var(--round); font-size:.95rem; box-shadow:0 4px 12px rgba(224,114,143,.12);}
+  .fact b{color:#c76a86;}
+
+  /* jar */
+  .jar{position:relative; width:150px; height:190px; margin:1rem auto;}
+  .jar .glass{position:absolute; inset:0; border:3px solid rgba(224,114,143,.4); border-radius:20px 20px 34px 34px; background:linear-gradient(180deg,rgba(255,255,255,.25),rgba(255,214,231,.35)); backdrop-filter:blur(2px);}
+  .jar .lid{position:absolute; top:-14px; left:50%; transform:translateX(-50%); width:70px; height:18px; background:var(--pink-3); border-radius:6px;}
+  .jar .glow{position:absolute; width:8px; height:8px; border-radius:50%; background:radial-gradient(circle,#fff,var(--gold)); box-shadow:0 0 8px 2px var(--gold); animation:glowfloat 4s ease-in-out infinite;}
+  @keyframes glowfloat{0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);}}
+
+  /* final screen */
+  .starfield{position:absolute; inset:0; background:radial-gradient(circle at 30% 20%, #4b3a63, #2a2140 60%, #1a1430); border-radius:0; z-index:-1;}
+  .screen#s9{color:#fff;}
+  .screen#s9 h1.script{color:#ffd6ea;}
+  .screen#s9 p.line{color:#e9d9f5;}
+  .moon{position:absolute; top:8%; right:10%; width:60px; height:60px; border-radius:50%; background:radial-gradient(circle at 35% 35%, #fff8e0, #f2d98a); box-shadow:0 0 30px 8px rgba(242,200,121,.5);}
+
+  /* secret hidden button */
+  #hiddenBtn{position:absolute; bottom:10px; right:14px; background:none; border:none; font-size:.7rem; color:rgba(155,120,130,.25); cursor:pointer; font-family:var(--body);}
+  #hiddenBtn:hover{color:rgba(155,120,130,.5);}
+
+  /* teddy / secret screen char */
+  .char{font-size:3rem; margin-top:.6rem;}
+
+  ::selection{background:var(--pink-3); color:#fff;}
+  @media (max-width:640px){
+    .cards{gap:10px;}
+    .card{min-width:120px; max-width:44vw; font-size:.85rem; padding:.85rem 1rem;}
+    .hearts-grid{gap:12px;}
+    .big-heart{font-size:2.1rem;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .btn, .drift, .big-heart{animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div id="decor"></div>
+<div id="progress"></div>
+<button id="backBtn">←</button>
+<button id="musicToggle">♫ Музыка: выкл</button>
+<button id="heartNav" onclick="heartNavClick(event)" title="Дальше">
+  <span class="lobe left"></span><span class="lobe right"></span><span class="arrow">→</span>
+</button>
+
+<div id="app">
+
+  <!-- 1 -->
+  <section class="screen" id="s1">
+    <div class="fade-in" style="animation-delay:.1s">💌</div>
+    <h1 class="script fade-in" style="animation-delay:.35s">Амина...</h1>
+    <p class="line fade-in" style="animation-delay:.9s">это маленькое кое-что для тебя</p>
+    <button class="btn fade-in" style="animation-delay:1.4s" onclick="burst(event); goTo(2)">Открыть 💗</button>
+    <p class="line fade-in" style="animation-delay:1.8s; font-size:.85rem; color:var(--ink-soft)">Только, пожалуйста, дочитай до конца :)</p>
+  </section>
+
+  <!-- 2 -->
+  <section class="screen" id="s2">
+    <h1 class="script fade-in">Амина, я люблю тебя.</h1>
+    <p class="line fade-in" style="animation-delay:.5s">Наверное, эти четыре слова никогда не смогут полностью описать то, что я чувствую.</p>
+    <p class="line fade-in" style="animation-delay:1s">Но я всё равно попробую.</p>
+    <button class="btn fade-in" style="animation-delay:1.5s" onclick="burst(event); goTo(3)">Попробовать →</button>
+  </section>
+
+  <!-- 3 -->
+  <section class="screen" id="s3">
+    <h2 class="script fade-in">Почему именно ты? 🌷</h2>
+    <p class="line fade-in" style="animation-delay:.3s">Наверное, я мог бы написать тысячу причин. Но начну хотя бы с нескольких.</p>
+    <div class="cards" id="whyCards"></div>
+    <button class="btn ghost fade-in" style="animation-delay:.6s; margin-top:1.4rem" onclick="goTo(4)">Дальше →</button>
+  </section>
+
+  <!-- 4 -->
+  <section class="screen" id="s4">
+    <h2 class="script fade-in">Теперь немного очевидных вещей...</h2>
+    <p class="line fade-in" style="animation-delay:.3s">Хотя я всё равно хочу тебе их сказать.</p>
+    <div class="cards" id="complimentCards"></div>
+    <button class="btn ghost fade-in" style="animation-delay:.6s; margin-top:1.4rem" onclick="goTo(5)">Дальше →</button>
+  </section>
+
+  <!-- 5 -->
+  <section class="screen" id="s5">
+    <h2 class="script fade-in">Мне нравится, когда ты рядом.</h2>
+    <div id="truthLines" style="margin-top:.6rem;"></div>
+    <button class="btn fade-in" id="s5btn" style="display:none; margin-top:1.2rem" onclick="goTo(6)">Дальше →</button>
+  </section>
+
+  <!-- 6 -->
+  <section class="screen" id="s6">
+    <h2 class="script fade-in">У меня для тебя есть несколько важных сообщений.</h2>
+    <p class="line fade-in" style="animation-delay:.3s">Выбери сердечко.</p>
+    <div class="hearts-grid" id="heartsGrid"></div>
+    <button class="btn fade-in" id="s6btn" style="display:none; margin-top:1.2rem" onclick="goTo(7)">Дальше →</button>
+  </section>
+
+  <!-- 7 -->
+  <section class="screen" id="s7">
+    <h2 class="script fade-in">А теперь немного научных фактов. 🧪</h2>
+    <p class="line fade-in" style="animation-delay:.3s; font-size:.9rem">Исследования проводились лично мной.</p>
+    <div class="facts">
+      <div class="fact">🧪 Вероятность того, что Амина милая: <b>100%</b></div>
+      <div class="fact">🧪 Вероятность того, что она красивая: <b>100%</b></div>
+      <div class="fact">🧪 Вероятность того, что я в неё влюблён: <b>1000%</b></div>
+      <div class="fact">🧪 Вероятность того, что я перестану её любить: <b>Ошибка 404 — не найдено</b></div>
+    </div>
+    <button class="btn fade-in" style="margin-top:1.4rem" onclick="goTo(8)">Дальше →</button>
+  </section>
+
+  <!-- 8 -->
+  <section class="screen" id="s8">
+    <h2 class="script fade-in">Если бы можно было... ✨</h2>
+    <div id="jarLines" style="margin-top:.4rem;"></div>
+    <div class="jar"><div class="lid"></div><div class="glass" id="jarGlass"></div></div>
+    <button class="btn fade-in" id="s8btn" style="display:none;" onclick="goTo(9)">Дальше →</button>
+  </section>
+
+  <!-- 9 -->
+  <section class="screen" id="s9">
+    <div class="starfield"></div>
+    <div class="moon"></div>
+    <h1 class="script fade-in">Амина, я люблю тебя ❤️</h1>
+    <p class="line fade-in" style="animation-delay:.5s">Не за что-то конкретное.</p>
+    <p class="line fade-in" style="animation-delay:1s">Не потому что ты должна быть идеальной.</p>
+    <p class="line fade-in" style="animation-delay:1.5s">А просто потому, что именно тебя я выбрал сердцем.</p>
+    <p class="line fade-in" style="animation-delay:2.2s; font-weight:600;">И каждый раз, когда думаю о тебе, понимаю, что выбрал правильно.</p>
+    <button class="btn fade-in" style="animation-delay:2.8s" onclick="burst(event); goTo(10)">Дальше →</button>
+  </section>
+
+  <!-- 10 -->
+  <section class="screen" id="s10">
+    <h2 class="script fade-in">И это ещё не всё...</h2>
+    <div class="envelope" id="envelope10" onclick="openEnvelope()">
+      <div class="body"></div>
+      <div class="flap"></div>
+      <div class="heart-seal">❤️</div>
+    </div>
+    <button class="btn fade-in" style="margin-top:.6rem" onclick="burst(event); goTo(11)">У меня есть ещё кое-что →</button>
+  </section>
+
+  <!-- 11 -->
+  <section class="screen" id="s11">
+    <h2 class="script fade-in">Спасибо, что ты есть.</h2>
+    <div id="thanksLines" style="margin-top:.4rem;"></div>
+    <div id="s11final" style="display:none;">
+      <h1 class="script" style="margin-top:1rem;">Люблю тебя, Амина ❤️</h1>
+      <p class="line" style="font-size:.9rem;">Это всё.</p>
+      <p class="line" style="font-size:.9rem;">Хотя, если честно, я мог бы продолжать ещё очень долго :)</p>
+      <button class="btn" style="margin-top:.6rem" onclick="goTo(12)">Дальше →</button>
+    </div>
+    <button id="hiddenBtn" onclick="hiddenPress()">Не нажимать</button>
+  </section>
+
+  <!-- 12 -->
+  <section class="screen" id="s12">
+    <h2 class="script fade-in">Секретная пасхалка 🐰</h2>
+    <div id="secretStage1">
+      <button class="btn ghost" style="margin-top:1rem" onclick="secretStep1()">А точно всё?</button>
+    </div>
+    <div id="secretStage2" style="display:none;">
+      <h2 class="script">Да.</h2>
+    </div>
+    <div id="secretStage3" style="display:none;">
+      <h1 class="script">Но я всё равно люблю тебя ❤️</h1>
+      <p class="line">Теперь точно всё :)</p>
+      <div class="char">🐰</div>
+      <p class="line fade-in" style="font-size:.85rem; margin-top:1.4rem;">И если вдруг тебе когда-нибудь понадобится напоминание об этом... просто открой этот сайт снова.</p>
+      <p class="line" style="font-size:.8rem; color:var(--ink-soft)">Сделано с любовью. Только для тебя. 🌷</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ---------------- content data ---------------- */
+const whyCards = [
+  "Потому что рядом с тобой мне спокойно.",
+  "Потому что ты умеешь делать обычные дни особенными.",
+  "Потому что твоя улыбка — это отдельный вид счастья.",
+  "Потому что с тобой хочется делиться всем.",
+  "Потому что ты — это ты."
+];
+const whyBacks = [
+  "Даже когда вокруг какой-то хаос :)",
+  "И я это правда замечаю.",
+  "Проверено не раз.",
+  "Хорошим и не очень.",
+  "И этого более чем достаточно."
+];
+const compliments = ["Ты красивая.","Ты невероятная.","Ты очень милая.","Ты особенная.","Ты умеешь заставлять меня улыбаться.","С тобой хочется проводить больше времени.","Тебе очень идёт улыбка.","Ты делаешь мой мир немного лучше."];
+const truthLines = ["Мне нравится слышать твой голос.","Мне нравится смеяться с тобой.","Мне нравится узнавать тебя всё больше.","Мне нравится просто быть рядом.","И я надеюсь, что таких моментов у нас будет ещё очень-очень много."];
+const heartMsgs = ["Ты делаешь меня счастливее.","Мне очень повезло встретить тебя.","Ты заслуживаешь самого хорошего.","Я всегда хочу видеть твою улыбку.","Я люблю тебя. Очень."];
+const jarLines = ["Я бы сохранил каждый момент, когда ты улыбалась.","Каждый разговор, который не хотелось заканчивать.","Каждый день, который стал лучше только потому, что в нём была ты.","И собрал бы всё это в одну большую коллекцию счастливых воспоминаний."];
+const thanksLines = ["Спасибо за твою улыбку.","Спасибо за твои слова.","Спасибо за моменты рядом.","Спасибо просто за тебя."];
+
+let current = 1;
+const TOTAL = 12;
+const history = [1];
+
+function heartNavClick(e){
+  burst(e);
+  if(current < TOTAL) goTo(current + 1);
+}
+function updateHeartNav(n){
+  const btn = document.getElementById('heartNav');
+  if(n >= TOTAL){ btn.classList.add('hidden'); }
+  else { btn.classList.remove('hidden'); }
+}
+
+function renderProgress(){
+  const p = document.getElementById('progress');
+  let out = '';
+  for(let i=1;i<=TOTAL;i++){ out += `<span class="${i<=current?'done':''}">${i<=current?'♥':'♡'}</span>`; }
+  p.innerHTML = out;
+}
+
+function goTo(n, isBack){
+  const cur = document.getElementById('s'+current);
+  const next = document.getElementById('s'+n);
+  cur.classList.add('leaving');
+  cur.classList.remove('active');
+  setTimeout(()=>{ cur.classList.remove('leaving'); }, 700);
+  next.classList.add('active');
+  current = n;
+  if(!isBack) history.push(n);
+  renderProgress();
+  updateHeartNav(n);
+  triggerScreenEffects(n);
+  restartFadeIns(next);
+}
+
+function restartFadeIns(scope){
+  scope.querySelectorAll('.fade-in').forEach(el=>{
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = '';
+  });
+}
+
+document.getElementById('backBtn').addEventListener('click', ()=>{
+  if(history.length>1){
+    history.pop();
+    const prev = history[history.length-1];
+    goTo(prev, true);
+  }
+});
+
+/* ---------------- decor: petals, hearts, sparkles ---------------- */
+const decor = document.getElementById('decor');
+function spawn(cls, symbol, opts={}){
+  const el = document.createElement('div');
+  el.className = 'drift ' + cls;
+  el.textContent = symbol;
+  el.style.left = (opts.left ?? Math.random()*100) + 'vw';
+  el.style.fontSize = (opts.size ?? (12+Math.random()*14)) + 'px';
+  el.style.setProperty('--dx', (Math.random()*80-40)+'px');
+  el.style.animationDuration = (opts.dur ?? (10+Math.random()*10)) + 's';
+  el.style.animationDelay = (opts.delay ?? Math.random()*8) + 's';
+  if(cls==='spark'){ el.style.top = Math.random()*100+'vh'; }
+  decor.appendChild(el);
+  return el;
+}
+for(let i=0;i<9;i++) spawn('petal','🌸',{});
+for(let i=0;i<7;i++) spawn('spark','✦',{});
+for(let i=0;i<6;i++) spawn('spark','✧',{});
+for(let i=0;i<5;i++) spawn('float-heart','♡',{dur:14+Math.random()*10});
+
+/* click heart burst */
+function burst(e){
+  const x = e.clientX, y = e.clientY;
+  for(let i=0;i<7;i++){
+    const h = document.createElement('div');
+    h.textContent = ['❤️','💗','♡','✨'][Math.floor(Math.random()*4)];
+    h.style.position='fixed'; h.style.left=x+'px'; h.style.top=y+'px';
+    h.style.fontSize=(14+Math.random()*10)+'px'; h.style.zIndex=999; h.style.pointerEvents='none';
+    h.style.transition='transform 1s ease-out, opacity 1s ease-out';
+    document.body.appendChild(h);
+    requestAnimationFrame(()=>{
+      const ang = Math.random()*Math.PI*2, dist = 40+Math.random()*70;
+      h.style.transform = `translate(${Math.cos(ang)*dist}px, ${Math.sin(ang)*dist - 30}px) scale(1.3)`;
+      h.style.opacity='0';
+    });
+    setTimeout(()=>h.remove(),1050);
+  }
+}
+
+/* ---------------- build cards ---------------- */
+function buildCards(containerId, fronts, backs){
+  const c = document.getElementById(containerId);
+  fronts.forEach((txt,i)=>{
+    const card = document.createElement('div');
+    card.className='card';
+    card.innerHTML = `<span class="mini-heart">♡</span><span class="front">${txt}</span>${backs? `<span class="back">${backs[i]}</span>`:''}`;
+    card.addEventListener('click', (e)=>{ card.classList.toggle('open'); if(card.classList.contains('open')) burst(e); });
+    c.appendChild(card);
+  });
+}
+buildCards('whyCards', whyCards, whyBacks);
+buildCards('complimentCards', compliments, ["И да, я специально сделал этот сайт, чтобы лишний раз тебе это сказать ❤️"]);
+document.querySelectorAll('#complimentCards .card').forEach((c,i)=>{
+  if(i>0) c.querySelector('.back')?.remove();
+  if(i>0){ c.addEventListener('click', ()=>{}, {once:false}); }
+});
+// give every compliment card its own reveal text
+document.querySelectorAll('#complimentCards .card').forEach((c)=>{
+  if(!c.querySelector('.back')){
+    const back = document.createElement('span'); back.className='back';
+    back.textContent = "И да, я специально сделал этот сайт, чтобы лишний раз тебе это сказать ❤️";
+    c.appendChild(back);
+  }
+});
+
+/* ---------------- truth lines (screen 5) ---------------- */
+function playTruth(){
+  const box = document.getElementById('truthLines');
+  box.innerHTML=''; document.getElementById('s5btn').style.display='none';
+  truthLines.forEach((line,i)=>{
+    setTimeout(()=>{
+      const p = document.createElement('p');
+      p.className='line fade-in';
+      p.innerHTML = line + ' <span style="color:#e0728f">♡</span>';
+      box.appendChild(p);
+      if(i===truthLines.length-1){
+        setTimeout(()=>{ document.getElementById('s5btn').style.display='inline-block'; },600);
+      }
+    }, i*950);
+  });
+}
+
+/* ---------------- hearts screen (screen 6) ---------------- */
+function buildHearts(){
+  const grid = document.getElementById('heartsGrid');
+  grid.innerHTML='';
+  heartMsgs.forEach((msg,i)=>{
+    const wrap = document.createElement('div');
+    const h = document.createElement('div');
+    h.className='big-heart'; h.textContent='❤️';
+    const m = document.createElement('div'); m.className='heart-msg'; m.style.display='none'; m.textContent=msg;
+    h.addEventListener('click',(e)=>{
+      if(h.classList.contains('opened')) return;
+      h.classList.add('opened'); burst(e); m.style.display='block';
+      checkAllHeartsOpened();
+    });
+    wrap.appendChild(h); wrap.appendChild(m);
+    grid.appendChild(wrap);
+  });
+}
+function checkAllHeartsOpened(){
+  const opened = document.querySelectorAll('#heartsGrid .big-heart.opened').length;
+  if(opened===heartMsgs.length){
+    setTimeout(()=>{ document.getElementById('s6btn').style.display='inline-block'; },400);
+  }
+}
+
+/* ---------------- jar (screen 8) ---------------- */
+function playJar(){
+  const box = document.getElementById('jarLines');
+  box.innerHTML=''; document.getElementById('s8btn').style.display='none';
+  const glass = document.getElementById('jarGlass');
+  glass.innerHTML='';
+  jarLines.forEach((line,i)=>{
+    setTimeout(()=>{
+      const p = document.createElement('p'); p.className='line fade-in'; p.style.fontSize='.95rem'; p.textContent=line;
+      box.appendChild(p);
+      const dot = document.createElement('div'); dot.className='glow';
+      dot.style.left = (20+Math.random()*60)+'%'; dot.style.top = (20+Math.random()*60)+'%';
+      dot.style.animationDelay = (Math.random()*2)+'s';
+      glass.appendChild(dot);
+      if(i===jarLines.length-1) setTimeout(()=>{ document.getElementById('s8btn').style.display='inline-block'; },500);
+    }, i*1000);
+  });
+}
+
+/* ---------------- envelope (screen 10) ---------------- */
+function openEnvelope(){
+  const env = document.getElementById('envelope10');
+  if(env.classList.contains('open')) return;
+  env.classList.add('open');
+  const rect = env.getBoundingClientRect();
+  burst({clientX:rect.left+rect.width/2, clientY:rect.top});
+}
+
+/* ---------------- thanks (screen 11) ---------------- */
+function playThanks(){
+  const box = document.getElementById('thanksLines');
+  box.innerHTML=''; document.getElementById('s11final').style.display='none';
+  thanksLines.forEach((line,i)=>{
+    setTimeout(()=>{
+      const p = document.createElement('p'); p.className='line fade-in'; p.textContent=line;
+      box.appendChild(p);
+      if(i===thanksLines.length-1) setTimeout(()=>{ document.getElementById('s11final').style.display='block'; },500);
+    }, i*800);
+  });
+}
+function hiddenPress(){
+  const btn = document.getElementById('hiddenBtn');
+  const note = document.createElement('p');
+  note.className='line fade-in'; note.style.fontSize='.85rem'; note.style.color='var(--ink-soft)';
+  note.textContent = 'Ну вот зачем ты нажала? :(';
+  btn.parentElement.appendChild(note);
+  setTimeout(()=>{
+    note.textContent = 'Ладно... раз уж нажала — люблю тебя ещё сильнее ❤️';
+    for(let i=0;i<18;i++){
+      setTimeout(()=>{
+        const rect = btn.getBoundingClientRect();
+        burst({clientX: rect.left + Math.random()*40, clientY: rect.top + Math.random()*40});
+      }, i*60);
+    }
+  },1000);
+}
+
+/* ---------------- secret screen (screen 12) ---------------- */
+function secretStep1(){
+  document.getElementById('secretStage1').style.display='none';
+  document.getElementById('secretStage2').style.display='block';
+  setTimeout(()=>{
+    document.getElementById('secretStage2').style.display='none';
+    document.getElementById('secretStage3').style.display='block';
+    for(let i=0;i<12;i++){
+      setTimeout(()=>burst({clientX: window.innerWidth/2 + (Math.random()*160-80), clientY: window.innerHeight/2}), i*80);
+    }
+  },1600);
+}
+
+/* ---------------- screen-triggered effects ---------------- */
+function triggerScreenEffects(n){
+  if(n===5) playTruth();
+  if(n===6) buildHearts();
+  if(n===8) playJar();
+  if(n===11) playThanks();
+}
+
+/* ---------------- easter egg: click title 3x on screen 1 ---------------- */
+let titleClicks = 0;
+document.querySelector('#s1 h1').addEventListener('click', ()=>{
+  titleClicks++;
+  if(titleClicks===3){
+    const note = document.createElement('p');
+    note.className='line fade-in'; note.style.color='#c76a86';
+    note.textContent = 'Ты нашла секрет ❤️ Но вообще-то я просто хотел ещё раз сказать, что люблю тебя.';
+    document.getElementById('s1').appendChild(note);
+    for(let i=0;i<10;i++) setTimeout(()=>burst({clientX:window.innerWidth/2, clientY:window.innerHeight/2}), i*70);
+  }
+});
+
+/* ---------------- gentle ambient music via WebAudio (no external files) ---------------- */
+let audioCtx, musicOn=false, musicNodes=[];
+function startMusic(){
+  audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+  const notes = [523.25,659.25,783.99,987.77]; // soft major arpeggio
+  const master = audioCtx.createGain(); master.gain.value = 0.05; master.connect(audioCtx.destination);
+  musicNodes.push(master);
+  notes.forEach((freq,i)=>{
+    const osc = audioCtx.createOscillator(); osc.type='sine'; osc.frequency.value=freq;
+    const g = audioCtx.createGain(); g.gain.value=0;
+    osc.connect(g); g.connect(master);
+    osc.start();
+    const lfo = audioCtx.createOscillator(); lfo.frequency.value=0.08+i*0.02;
+    const lfoGain = audioCtx.createGain(); lfoGain.gain.value=0.04;
+    lfo.connect(lfoGain); lfoGain.connect(g.gain); lfo.start();
+    musicNodes.push(osc,lfo,g,lfoGain);
+  });
+}
+function stopMusic(){
+  musicNodes.forEach(n=>{ try{ n.stop && n.stop(); n.disconnect && n.disconnect(); }catch(e){} });
+  musicNodes = [];
+}
+document.getElementById('musicToggle').addEventListener('click', function(){
+  musicOn = !musicOn;
+  this.textContent = '♫ Музыка: ' + (musicOn? 'вкл':'выкл');
+  if(musicOn) startMusic(); else stopMusic();
+});
+
+/* ---------------- init ---------------- */
+document.getElementById('s1').classList.add('active');
+renderProgress();
+updateHeartNav(1);
+</script>
+</body>
+</html>
